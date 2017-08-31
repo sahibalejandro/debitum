@@ -43,7 +43,9 @@ export default {
 
     methods: {
         confirmPayment() {
-            if (confirm(`Please confirm you want to pay ${this.payment.name}`)) {
+            let amount = accounting.formatMoney(this.payment.amount / 100);
+
+            if (confirm(`Pay ${amount} for ${this.payment.name}?`)) {
                 this.pay();
             }
         },
@@ -62,7 +64,7 @@ export default {
         },
 
         confirmDeletion() {
-            if (confirm(`Delete ${this.payment.name}`)) {
+            if (confirm(`Delete payment ${this.payment.name}?`)) {
                 this.destroy();
             }
         },

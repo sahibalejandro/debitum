@@ -11,6 +11,94 @@ class PaymentsTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
+    public function payment_name_is_required()
+    {
+        $this->call('POST', '/payments');
+        $this->assertTrue(session('errors')->has('name'));
+    }
+
+    /** @test */
+    public function payment_amount_is_required_and_is_numeric()
+    {
+        $this->call('POST', '/payments');
+        $this->assertTrue(session('errors')->has('amount'));
+
+        $this->call('POST', '/payments', ['amount' => 'abc']);
+        $this->assertTrue(session('errors')->has('amount'));
+
+        $this->call('POST', '/payments', ['amount' => 123]);
+        $this->assertFalse(session('errors')->has('amount'));
+    }
+
+    /** @test */
+    public function payment_due_date_is_required_and_is_a_date()
+    {
+        $this->call('POST', '/payments');
+        $this->assertTrue(session('errors')->has('due_date'));
+
+        $this->call('POST', '/payments', ['due_date' => 'invalid date']);
+        $this->assertTrue(session('errors')->has('due_date'));
+
+        $this->call('POST', '/payments', ['due_date' => '2000-01-01']);
+        $this->assertFalse(session('errors')->has('due_date'));
+    }
+
+    /** @test */
+    public function payment_repeat_period_is_required_and_numeric_when_repeat_designator_is_present()
+    {
+        $this->call('POST', '/payments');
+        $this->assertFalse(session('errors')->has('repeat_period'));
+
+        $this->call('POST', '/payments', ['repeat_designator' => 'weeks']);
+        $this->assertTrue(session('errors')->has('repeat_period'));
+
+        $this->call('POST', '/payments', ['repeat_period' => 'abc', 'repeat_designator' => 'weeks']);
+        $this->assertTrue(session('errors')->has('repeat_period'));
+
+        $this->call('POST', '/payments', ['repeat_period' => 123, 'repeat_designator' => 'weeks']);
+        $this->assertFalse(session('errors')->has('repeat_period'));
+    }
+
+    /** @test */
+    public function payment_repeat_designator_is_required_if_repeat_period_is_present()
+    {
+        $this->call('POST', '/payments');
+        $this->assertFalse(session('errors')->has('repeat_designator'));
+
+        $this->call('POST', '/payments', ['repeat_period' => 1]);
+        $this->assertTrue(session('errors')->has('repeat_designator'));
+
+        $this->call('POST', '/payments', ['repeat_period' => 1, 'repeat_designator' => 'weeks']);
+        $this->assertFalse(session('errors')->has('repeat_designator'));
+    }
+
+    /** @test */
+    public function payment_repeat_designator_must_have_an_allowed_value()
+    {
+        $this->call('POST', '/payments', ['repeat_designator' => 'invalid']);
+        $this->assertTrue(session('errors')->has('repeat_designator'));
+
+        collect(['weeks', 'months', 'years'])->each(function ($validDesignator) {
+            $this->call('POST', '/payments', ['repeat_designator' => $validDesignator]);
+            $this->assertFalse(session('errors')->has('repeat_designator'));
+        });
+    }
+
+    /** @test */
+    public function payment_repeat_period_can_be_nullable()
+    {
+        $this->call('POST', '/payments', ['repeat_period' => null]);
+        $this->assertFalse(session('errors')->has('repeat_period'));
+    }
+
+    /** @test */
+    public function payment_repeat_designator_can_be_nullable()
+    {
+        $this->call('POST', '/payments', ['repeat_designator' => null]);
+        $this->assertFalse(session('errors')->has('repeat_designator'));
+    }
+
+    /** @test */
     public function create_a_new_payment()
     {
         $this->json('POST', '/payments', [

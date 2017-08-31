@@ -28,6 +28,8 @@ class PaymentForm extends FormRequest
             'name' => 'required',
             'amount' => 'required|numeric',
             'due_date' => 'required|date',
+            'repeat_period' => 'required_with:repeat_designator|numeric|nullable',
+            'repeat_designator' => 'required_with:repeat_period|in:weeks,months,years|nullable',
         ];
     }
 

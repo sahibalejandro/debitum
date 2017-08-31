@@ -1,9 +1,10 @@
 <template>
     <form @submit.prevent="save">
         <!-- Name -->
-        <div class="form-group">
+        <div class="form-group mt-3">
             <label>Name</label>
-            <input v-model="payment.name" class="form-control" type="text" v-focus>
+            <input v-model="payment.name" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }" type="text" v-focus>
+            <small class="text-danger" v-text="form.errors.get('name')"></small>
         </div>
 
         <!-- Amount -->
@@ -11,14 +12,16 @@
             <label>Amount</label>
             <div class="input-group">
                 <div class="input-group-addon">$</div>
-                <input v-model="amount" class="form-control" type="number" min="1" step="0.01">
+                <input v-model="amount" class="form-control" :class="{ 'is-invalid': form.errors.has('amount') }" type="number" min="1" step="0.01">
             </div>
+            <small class="text-danger" v-text="form.errors.get('amount')"></small>
         </div>
 
         <!-- Due date -->
         <div class="form-group">
             <label>Due date</label>
-            <input v-model="payment.due_date" class="form-control" type="date">
+            <input v-model="payment.due_date" class="form-control" :class="{ 'is-invalid': form.errors.has('due_date') }" type="date">
+            <small class="text-danger" v-text="form.errors.get('due_date')"></small>
         </div>
 
         <!-- Repeat -->
@@ -28,19 +31,21 @@
                     <input class="form-check-input" type="checkbox" v-model="repeat"> Repeat
                 </label>
             </div>
-            <div class="form-row align-items-center" v-show="repeat">
+            <div class="form-row align-items-center" v-if="repeat">
                 <div class="col-auto">Every</div>
                 <div class="col">
-                    <input v-model="payment.repeat_period" class="form-control" type="number" step="1" min="1" max="100">
+                    <input v-model="payment.repeat_period" class="form-control" :class="{ 'is-invalid': form.errors.has('repeat_period') }" type="number" step="1" min="1" max="100">
                 </div>
                 <div class="col">
-                    <select v-model="payment.repeat_designator" class="form-control">
+                    <select v-model="payment.repeat_designator" class="form-control" :class="{ 'is-invalid': form.errors.has('repeat_designator') }">
                         <option value="weeks">weeks</option>
                         <option value="months">months</option>
                         <option value="years">years</option>
                     </select>
                 </div>
             </div>
+            <small class="text-danger" v-text="form.errors.get('repeat_period')"></small>
+            <small class="text-danger" v-text="form.errors.get('repeat_designator')"></small>
         </div>
 
         <!-- Submit -->
@@ -60,7 +65,7 @@ export default {
                 return {
                     name: null,
                     amount: null,
-                    due_date: null,
+                    due_date: moment().add(1, 'days').format('YYYY-MM-DD'),
                     repeat_period: null,
                     repeat_designator: null
                 }
@@ -111,7 +116,7 @@ export default {
     methods: {
         async save() {
             await this.form.save('/payments', this.payment);
-            Turbolinks.visit('/payments');
+            Turbolinks.visit('/payments', {action: 'replace'});
         }
     }
 }

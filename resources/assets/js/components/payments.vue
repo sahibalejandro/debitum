@@ -1,12 +1,20 @@
 <template>
     <div class="mt-3">
-        <a href="/payments/create">Add new payment</a>
         <payment v-for="payment in sortedPayments"
             :key="payment.id"
             :payment="payment"
             @deleted="removePayment"
             @paid="paidPayment">
         </payment>
+        <div v-if="payments.length === 0" class="text-center mt-3">
+            <div class="display-4 mt-5 mb-5">🎉</div>
+            <p>
+                Great! You have nothing to pay.
+            </p>
+            <p>
+                <small class="text-muted">Try to mantain this message ;)</small>
+            </p>
+        </div>
     </div>
 </template>
 

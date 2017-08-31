@@ -24,6 +24,7 @@ class PaymentsController extends Controller
     public function create()
     {
         return view('layout')->with([
+            'title' => 'Add',
             'component' => 'payment-form',
         ]);
     }
@@ -38,6 +39,7 @@ class PaymentsController extends Controller
     public function edit(Payment $payment)
     {
         return view('layout')->with([
+            'title' => 'Edit',
             'component' => 'payment-form',
             'props' => [
                 ':data-payment' => $payment,

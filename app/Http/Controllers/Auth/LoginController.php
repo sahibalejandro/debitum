@@ -2,38 +2,85 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
-    use AuthenticatesUsers;
-
     /**
-     * Where to redirect users after login.
+     * Display a page with different login providers.
      *
-     * @var string
+     * @return \Illuminate\View\View
      */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function index()
     {
-        $this->middleware('guest')->except('logout');
+        return view('layout')->with([
+            'title' => 'Login',
+            'component' => 'login',
+            'props' => [
+                'auth-error' => session('auth_error')
+            ]
+        ]);
+    }
+
+    /**
+     * Redirects the user to the login provider.
+     *
+     * @param  string $provider
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function create($provider)
+    {
+        return Socialite::driver($provider)->redirect();
+    }
+
+    /**
+     * Handle the callback from a login provider.
+     *
+     * @param  string $provider
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store($provider)
+    {
+        try {
+            $oAuthUser = Socialite::driver($provider)->user();
+        } catch (\Exception $e) {
+            return $this->goBackWithError('Unable to get user data');
+        }
+
+        if (! $oAuthUser->getEmail()) {
+            return $this->goBackWithError('Email is not available');
+        }
+
+        $this->authenticate($oAuthUser, $provider);
+
+        return redirect('/');
+    }
+
+    /**
+     * Redirect the user to the login page with an error message.
+     *
+     * @param  string $error
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function goBackWithError($error)
+    {
+        return redirect()->route('login')->with(['auth_error' => $error]);
+    }
+
+    /**
+     * Authenticates a app user using information from an OAuthUser.
+     *
+     * @param  string $provider
+     * @param  \Laravel\Socialite\Contracts\User $oAuthUser
+     */
+    protected function authenticate($oAuthUser, $provider)
+    {
+        Auth::login(User::firstOrCreate([
+            'email' => $oAuthUser->getEmail(),
+            'provider' => $provider,
+        ]));
     }
 }

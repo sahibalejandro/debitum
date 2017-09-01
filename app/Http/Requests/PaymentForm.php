@@ -14,7 +14,11 @@ class PaymentForm extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        if ($this->method() == 'POST') {
+            return true;
+        }
+
+        return $this->user()->owns($this->route('payment'));
     }
 
     /**
@@ -33,11 +37,26 @@ class PaymentForm extends FormRequest
         ];
     }
 
+    /**
+     * Create a new payment using the request data and store it into database.
+     *
+     * @return \App\Payment
+     */
     public function store()
     {
-        return Payment::create($this->all());
+        $payment = new Payment($this->all());
+
+        $this->user()->payments()->save($payment);
+
+        return $payment->fresh();
     }
 
+    /**
+     * Update a payment using the request data.
+     *
+     * @param  \App\Payment $payment
+     * @return \App\Payment
+     */
     public function update(Payment $payment)
     {
         $payment->update($this->all());

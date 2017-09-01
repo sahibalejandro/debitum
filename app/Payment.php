@@ -17,6 +17,17 @@ class Payment extends Model
         'repeat_designator',
     ];
 
+    protected $hidden = [
+        'user_id',
+        'created_at',
+        'updated_at',
+    ];
+
+    protected $casts = [
+        'amount' => 'int',
+        'repeat_period' => 'int',
+    ];
+
     protected static function boot()
     {
         parent::boot();

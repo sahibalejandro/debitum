@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'email', 'provider',
     ];
 
     /**
@@ -24,6 +24,27 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'remember_token',
     ];
+
+    /**
+     * User payments.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Checks if the given entity belongs to this user.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model $entity
+     * @return bool
+     */
+    public function owns($entity)
+    {
+        return $entity->user_id == $this->id;
+    }
 }

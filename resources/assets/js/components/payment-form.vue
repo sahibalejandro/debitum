@@ -1,5 +1,10 @@
 <template>
     <form @submit.prevent="save">
+
+        <div class="mt-3 mb-3">
+            <a href="/payments" class="btn btn-link">Payments</a>
+        </div>
+
         <!-- Name -->
         <div class="form-group mt-3">
             <label>Name</label>

@@ -1,10 +1,14 @@
 <template>
     <div class="mt-3">
+        <div class="mb-3">
+            <a href="/paid" class="btn btn-link">History</a>
+            <a href="/payments/create" class="btn btn-link">Add</a>
+        </div>
         <payment v-for="payment in sortedPayments"
-            :key="payment.id"
-            :payment="payment"
-            @deleted="removePayment"
-            @paid="paidPayment">
+                 :key="payment.id"
+                 :payment="payment"
+                 @deleted="removePayment"
+                 @paid="paidPayment">
         </payment>
         <div v-if="payments.length === 0" class="text-center mt-3">
             <div class="display-4 mt-5 mb-5">🎉</div>
@@ -20,7 +24,19 @@
 
 <script>
 export default {
-    props: ['data-payments'],
+    props: {
+        dataPayments: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
+
+        orderByDueDate: {
+            type: Boolean,
+            default: true
+        }
+    },
 
     data() {
         return {
@@ -35,6 +51,10 @@ export default {
          * @return {Array}
          */
         sortedPayments() {
+            if (! this.orderByDueDate) {
+                return this.payments;
+            }
+
             return this.payments.sort((a, b) => {
                 if (a.due_date < b.due_date) return -1;
                 if (a.due_date === b.due_date) return 0;

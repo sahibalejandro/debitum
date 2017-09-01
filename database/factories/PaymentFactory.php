@@ -16,6 +16,9 @@ $factory->define(App\Payment::class, function (Faker $faker) {
     }
 
     return [
+        'user_id' => function () {
+            return factory(App\User::class)->create()->id;
+        },
         'name' => $faker->text(30),
         'amount' => $faker->numberBetween(10000, 1000000),
         'due_date' => $faker->dateTimeBetween('-1 weeks', '1 weeks')->format('Y-m-d'),

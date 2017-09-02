@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -54,5 +55,36 @@ class Payment extends Model
     public function isRepeatable()
     {
         return !is_null($this->repeat_period);
+    }
+
+    /**
+     * Get the payment proximity date, such as "Today", "Tomorro"
+     * or "January 23, 2017".
+     *
+     * @return string
+     */
+    public function getDueDateProximityAttribute()
+    {
+        $dueDate = Carbon::parse($this->due_date);
+
+        if ($dueDate->isToday()) {
+            return 'Today';
+        }
+
+        if ($dueDate->isTomorrow()) {
+            return 'Tomorrow';
+        }
+
+        return $dueDate->format('F d, Y');
+    }
+
+    /**
+     * Get the amount in currency format.
+     *
+     * @return string
+     */
+    public function getAmountAsCurrencyAttribute()
+    {
+        return '$' . number_format($this->amount / 100, 2);
     }
 }

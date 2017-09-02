@@ -28,6 +28,17 @@ class User extends Authenticatable
     ];
 
     /**
+     * Checks if the given entity belongs to this user.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model $entity
+     * @return bool
+     */
+    public function owns($entity)
+    {
+        return $entity->user_id == $this->id;
+    }
+
+    /**
      * User payments.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -38,13 +49,29 @@ class User extends Authenticatable
     }
 
     /**
-     * Checks if the given entity belongs to this user.
+     * User incoming payments
      *
-     * @param  \Illuminate\Database\Eloquent\Model $entity
-     * @return bool
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function owns($entity)
+    public function incomingPayments()
     {
-        return $entity->user_id == $this->id;
+        return $this->payments()
+            ->whereNull('paid_at')
+            ->whereBetween('due_date', [
+                date('Y-m-d'),
+                date('Y-m-d', strtotime('+2 days'))
+            ]);
+    }
+
+    /**
+     * User overdue payments
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function overduePayments()
+    {
+        return $this->payments()
+            ->whereNull('paid_at')
+            ->where('due_date', '<', date('Y-m-d'));
     }
 }

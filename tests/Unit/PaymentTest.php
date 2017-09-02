@@ -49,4 +49,25 @@ class PaymentTest extends TestCase
 
         $this->assertNull($payment->repeat_designator);
     }
+
+    /** @test */
+    public function generates_due_date_proximity_string()
+    {
+        $payment = new Payment(['due_date' => date('Y-m-d')]);
+        $this->assertEquals('Today', $payment->dueDateProximity);
+
+        $payment->due_date = date('Y-m-d', strtotime('+1 days'));
+        $this->assertEquals('Tomorrow', $payment->dueDateProximity);
+
+        $payment->due_date = date('Y-m-d', strtotime('2000-01-01'));
+        $this->assertEquals('January 01, 2000', $payment->dueDateProximity);
+    }
+
+    /** @test */
+    public function format_amount_into_currency()
+    {
+        $payment = new Payment(['amount' => 123456]);
+
+        $this->assertEquals('$1,234.56', $payment->amountAsCurrency);
+    }
 }

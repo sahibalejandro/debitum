@@ -56,6 +56,7 @@ class User extends Authenticatable
     public function incomingPayments()
     {
         return $this->payments()
+            ->orderBy('due_date')
             ->whereNull('paid_at')
             ->whereBetween('due_date', [
                 date('Y-m-d'),
@@ -71,6 +72,7 @@ class User extends Authenticatable
     public function overduePayments()
     {
         return $this->payments()
+            ->orderBy('due_date')
             ->whereNull('paid_at')
             ->where('due_date', '<', date('Y-m-d'));
     }

@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Payment;
+use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -69,5 +70,29 @@ class PaymentTest extends TestCase
         $payment = new Payment(['amount' => 123456]);
 
         $this->assertEquals('$1,234.56', $payment->amountAsCurrency);
+    }
+
+    /** @test */
+    public function define_payment_level_based_on_due_date()
+    {
+        // Overdue payment
+        $payment = factory(Payment::class)->create(['due_date' => Carbon::now()->subDay()->format('Y-m-d')]);
+        $this->assertEquals('danger', $payment->level, 'Level DANGER for overdue payment');
+
+        // Payment for today
+        $payment = factory(Payment::class)->create(['due_date' => Carbon::now()->format('Y-m-d')]);
+        $this->assertEquals('danger', $payment->level, 'Level DANGER for today payment');
+
+        // Payment for tomorrow
+        $payment = factory(Payment::class)->create(['due_date' => Carbon::now()->addDay()->format('Y-m-d')]);
+        $this->assertEquals('warning', $payment->level, 'Level WARNING for tomorrow payment');
+
+        // Payment for day after tomorrow
+        $payment = factory(Payment::class)->create(['due_date' => Carbon::now()->addDays(2)->format('Y-m-d')]);
+        $this->assertEquals('success', $payment->level, 'Level WARNING for day after tomorrow payment');
+
+        // Payments beyond day after tomorrow
+        $payment = factory(Payment::class)->create(['due_date' => Carbon::now()->addDays(3)->format('Y-m-d')]);
+        $this->assertEquals('success', $payment->level, 'Level SUCCESS for far payment');
     }
 }

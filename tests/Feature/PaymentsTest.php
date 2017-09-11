@@ -140,6 +140,7 @@ class PaymentsTest extends TestCase
                 'repeat_period' => 1,
                 'repeat_designator' => 'months',
                 'paid_at' => null,
+                'level' => 'danger',
             ]
         ]);
     }
@@ -181,6 +182,7 @@ class PaymentsTest extends TestCase
                 'repeat_period' => 2,
                 'repeat_designator' => 'weeks',
                 'paid_at' => null,
+                'level' => 'danger',
             ],
         ]);
     }
@@ -269,7 +271,7 @@ class PaymentsTest extends TestCase
     {
         $payment = factory(Payment::class)->create([
             'user_id' => $this->user->id,
-            'due_date' => '2017-01-01',
+            'due_date' => '2000-01-01',
             'repeat_period' => 1,
             'repeat_designator' => 'weeks',
             'paid_at' => null,
@@ -277,14 +279,17 @@ class PaymentsTest extends TestCase
 
         $response = $this->json('POST', '/paid', ['id' => $payment->id]);
 
-        $response->assertJson([
+        $newPayment = Payment::orderBy('id', 'desc')->get()->first();
+        $response->assertExactJson([
             'next_payment' => [
+                'id' => $newPayment->id,
                 'name' => $payment->name,
                 'amount' => $payment->amount,
-                'due_date' => '2017-01-08',
+                'due_date' => '2000-01-08',
                 'repeat_period' => $payment->repeat_period,
                 'repeat_designator' => $payment->repeat_designator,
                 'paid_at' => null,
+                'level' => 'danger',
             ]
         ]);
     }

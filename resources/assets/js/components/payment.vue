@@ -1,7 +1,8 @@
 <template>
     <div>
-        <div class="card mb-3" :class="{ 'border-warning': paymentIsOverdue }">
-            <div class="card-header" :class="paymentIsOverdue ? 'border-warning bg-warning' : ''">
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="circle mr-1" :class="`circle--${payment.level}`"></div>
                 {{ payment.name }}
             </div>
             <div class="card-body">
@@ -32,12 +33,6 @@ export default {
     data() {
         return {
             form: new Form()
-        }
-    },
-
-    computed: {
-        paymentIsOverdue() {
-            return moment().isAfter(this.payment.due_date);
         }
     },
 

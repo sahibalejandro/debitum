@@ -9,9 +9,21 @@ if (app()->isLocal()) {
         $user = factory(App\User::class)->create();
 
         // Incoming payments
-        factory(App\Payment::class, 3)->create([
+        factory(App\Payment::class)->create([
+            'user_id' => $user->id,
+            'due_date' => date('Y-m-d', strtotime('today')),
+            'paid_at' => null,
+        ]);
+
+        factory(App\Payment::class)->create([
             'user_id' => $user->id,
             'due_date' => date('Y-m-d', strtotime('tomorrow')),
+            'paid_at' => null,
+        ]);
+
+        factory(App\Payment::class)->create([
+            'user_id' => $user->id,
+            'due_date' => date('Y-m-d', strtotime('+2 days')),
             'paid_at' => null,
         ]);
 

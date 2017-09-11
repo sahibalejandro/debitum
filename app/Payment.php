@@ -29,6 +29,10 @@ class Payment extends Model
         'repeat_period' => 'int',
     ];
 
+    protected $appends = [
+        'level'
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -58,7 +62,7 @@ class Payment extends Model
     }
 
     /**
-     * Get the payment proximity date, such as "Today", "Tomorro"
+     * Get the payment proximity date, such as "Today", "Tomorrow"
      * or "January 23, 2017".
      *
      * @return string
@@ -86,5 +90,25 @@ class Payment extends Model
     public function getAmountAsCurrencyAttribute()
     {
         return '$' . number_format($this->amount / 100, 2);
+    }
+
+    /**
+     * Get the payment level, it can be danger, warning or success.
+     *
+     * @return string
+     */
+    public function getLevelAttribute()
+    {
+        $dueDate = Carbon::parse($this->due_date);
+
+        if ($dueDate->isPast() || $dueDate->isToday()) {
+            return 'danger';
+        }
+
+        if ($dueDate->isTomorrow()) {
+            return 'warning';
+        }
+
+        return 'success';
     }
 }

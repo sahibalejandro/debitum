@@ -1,6 +1,9 @@
 Vue.filter('calendar', date => {
-    return moment(date).calendar(null, { 
+    return moment(date).calendar(null, {
+        sameDay: '[Today]',
+        nextDay: '[Tomorrow]',
         nextWeek: '[Next] dddd',
+        lastDay: '[Yesterday]',
         lastWeek: '[Last] dddd',
         sameElse: 'MMMM DD, YYYY'
     });

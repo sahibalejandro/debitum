@@ -5,7 +5,11 @@
         <div v-if="authError" class="alert alert-danger" v-text="authError"></div>
 
         <div data-turbolinks="false">
-            <a href="/login/redirect/google">Login with Google</a>
+            <div class="text-center mt-5">
+                <a href="/login/redirect/google">
+                    <img src="/i/btn_google_signin_dark_normal_web@2x.png" alt="Sign in with Google">
+                </a>
+            </div>
         </div>
 
     </div>

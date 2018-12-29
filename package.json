@@ -20,7 +20,7 @@
     },
     "dependencies": {
         "accounting": "^0.4.1",
-        "form-object": "1.6.0",
+        "form-object": "^1.7.0",
         "moment": "^2.18.1",
         "turbolinks": "^5.0.3",
         "vue-turbolinks": "^2.0.0"

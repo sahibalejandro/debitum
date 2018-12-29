@@ -3264,12 +3264,13 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-form-object@1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/form-object/-/form-object-1.6.0.tgz#b3f14032322fcc5b07b142d3804a6ca9c7344453"
-  integrity sha512-9rP7tsbi82PRxDjJKXhKjAfP0WLkzIE7rqI6ergzJDCoT1EWyfdAw7qWjmfS/61Qr4BhvMjuRm8QDaGSoA6fQA==
+form-object@^1.7.0:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/form-object/-/form-object-1.7.1.tgz#e01e542670ac23e54768e5960fe45e87a71de42f"
+  integrity sha512-BTKMOCRDS3+n8O2Gqtrq2NIO6y7RJdG9XRL/4fdB6nuGjnbgEdf4Wxax9l9BIXh4mk6sJZ4In1jITwZHBUzY6Q==
   dependencies:
     axios "^0.16.2"
+    object-to-formdata "^1.5.2"
     vue ">=1.0.0"
 
 forwarded@~0.1.2:
@@ -5673,6 +5674,11 @@ object-path@^0.9.2:
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/object-path/-/object-path-0.9.2.tgz#0fd9a74fc5fad1ae3968b586bda5c632bd6c05a5"
   integrity sha1-D9mnT8X60a45aLWGvaXGMr1sBaU=
+
+object-to-formdata@^1.5.2:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/object-to-formdata/-/object-to-formdata-1.6.2.tgz#0959b4531c48d1efb071692dc6dba9a077516bb9"
+  integrity sha512-yDbEawSNPpBC/CgZiMxcpFUUKa2VfL5MQOdwvS2rsUoyvfk5N3jo+lQAGacqjtjfz33DL4bv6aqBckHvKv0oUw==
 
 object-visit@^1.0.0:
   version "1.0.1"
